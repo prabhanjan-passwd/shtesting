@@ -11,10 +11,6 @@
 
   tasks:
 
-    - name: Retrieve auth token
-      ansible.builtin.include_role:
-        name: retrieve_auth_token 
-
     - name: Clone the resource repo for {{ organization_id }} 
       ansible.builtin.include_role:
         name: setup 
