@@ -1,0 +1,18 @@
+filetree_create_output_path: "/tmp/{{ organization_id }}" 
+
+casc_org_resources_repo_url: "https://{{ github_secret }}@github.com/cigna-group-infrastructure-services/aap_casc_resource_exports.git"
+
+credentials_management_repo_url: "https://{{ github_secret }}@github.com/cigna-group-infrastructure-services/aapCredsManagement.git"
+
+credentials_management_temp_dir: "/tmp/foo"
+
+credentials_management_script_name: "aapCreds.py"
+
+aap_24_controller_command_path: "/var/lib/awx/venv/awx/lib/python3.9/site-packages/awx/main/management/commands"
+
+aap_25_controller_command_path: "/var/lib/awx/venv/awx/lib/python3.11/site-packages/awx/main/management/commands"
+
+aap_25_controller_container_name: "automation-controller-web"
+
+secure_logging: true
+

@@ -1,0 +1,32 @@
+- name: Start block
+
+  block:
+
+    - name: Ensure source organization id is defined
+      ansible.builtin.assert:
+        that:
+          - organization_id != ""
+    
+    - name: Ensure new target organization name is defined
+      ansible.builtin.assert:
+        that:
+          - target_organization_name != ""
+    
+    - name: Check if the remote branch exists
+      ansible.builtin.command: >
+        git ls-remote {{ casc_org_resources_repo_url }} refs/heads/{{ organization_id }}
+      register: git_branch_exists_output
+      no_log: "{{ secure_logging }}"
+    
+    - name: Clone the branch for source organization {{ organization_id }}
+      ansible.builtin.command: >
+        git clone -b {{ organization_id }} {{ casc_org_resources_repo_url }} {{ filetree_create_output_path }}
+      when:
+        - git_branch_exists_output.stdout_lines | length | int != 0
+      no_log: "{{ secure_logging }}"
+    
+  rescue:
+
+    - name: Fail this play
+      ansible.builtin.fail:
+        msg: "Failed to clone resource repository for source organization {{ organization_id }}."
