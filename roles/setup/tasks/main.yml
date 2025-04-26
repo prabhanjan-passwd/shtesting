@@ -24,6 +24,12 @@
       when:
         - git_branch_exists_output.stdout_lines | length | int != 0
       no_log: "{{ secure_logging }}"
+
+    - name: Create a new branch using the new organization name
+      ansible.builtin.command: >
+        git checkout -b {{ target_organization_name }}
+      args:
+        chdir: "{{ filetree_create_output_path }}"
     
   rescue:
 

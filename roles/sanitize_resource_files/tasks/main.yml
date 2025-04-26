@@ -1,0 +1,45 @@
+- name: Compile a list of all yaml files
+  ansible.builtin.find:
+    paths: "{{ filetree_create_output_path }}"
+    patterns: '*.yaml'
+    recurse: yes
+  register: casc_resources_output
+  
+- name: Replace the controller_organizations variable
+  ansible.builtin.replace:
+    path: "{{ filetree_create_output_path }}/organizations.yaml"
+    regexp: '^controller_organizations:'
+    replace: 'aap_organizations:'
+
+- name: Replace the 2.4 organization name with the new 2.5 organization name
+  ansible.builtin.replace:
+    path: "{{ filetree_create_output_path }}/organizations.yaml"
+    regexp: '- name:.*'
+    replace: '- name: {{ target_organization_name }}'
+
+- name: Replace the eod delimeter
+  ansible.builtin.replace:
+    path: "{{ this_resource_file.path }}"
+    regexp: '\\.\\.\\.'
+    replace: ""
+  loop: "{{ casc_resources_output.files }}"
+  loop_control:
+    loop_var: this_resource_file
+
+- name: Set the execution environment to empty
+  ansible.builtin.replace:
+    path: "{{ this_resource_file.path }}"
+    regexp: 'execution_environment:.*'
+    replace: 'execution_environment: ""'
+  loop: "{{ casc_resources_output.files }}"
+  loop_control:
+    loop_var: this_resource_file
+
+- name: Replace the organization name in all other resource files
+  ansible.builtin.replace:
+    path: "{{ this_resource_file.path }}"
+    regexp: 'organization:.*'
+    replace: 'organization: {{ target_organization_name }}'
+  loop: "{{ casc_resources_output.files }}"
+  loop_control:
+    loop_var: this_resource_file

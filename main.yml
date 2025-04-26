@@ -15,19 +15,48 @@
       ansible.builtin.include_role:
         name: setup 
 
-#    - name: Sanitize the source files
-#      ansible.builtin.include_role:
-#        name: sanitize_resource_files
-#
-#    - name: Import the organization's resources
-#      ansible.builtin.import_role:
-#        name: infra.controller_configuration.filetree_create
-#      vars:
-#        output_path: "{{ filetree_create_output_path }}"
-#        # Don't specify schedules if exporting a single org or else all schedules will be exported
-#        input_tag: ['labels', 'applications', 'inventory', 'notification_templates', 'organizations', 'projects', 'execution_environments', 'job_templates', 'workflow_job_templates']
-#        flatten_output: true
-#
-#    - name: Upload resources for the next stage
-#      ansible.builtin.include_role:
-#        name: upload_resource_exports
+    - name: Sanitize the source files
+      ansible.builtin.include_role:
+        name: sanitize_resource_files
+
+    - name: Include vars from {{ filetree_create_output_path }}
+      ansible.builtin.include_vars:
+        dir: "{{ filetree_create_output_path }}"
+        #ignore_files: [controller_config.yml.template]
+        extensions: ["yaml"]
+        ignore_unknown_extensions: true
+
+    - name: Import the organization's resources
+      ansible.builtin.import_role: infra.aap_configuration.dispatch
+      vars: 
+        gateway_configuration_dispatcher_roles:
+          - role: gateway_organizations
+            var: aap_organizations
+            tags: organizations
+            assign_galaxy_credentials_to_org: true
+            assign_default_ee_to_org: false
+            assign_notification_templates_to_org: false
+
+        controller_configuration_dispatcher_roles:
+          # ORDER MATTERS!!!
+#          - role: controller_credential_types
+#            var: controller_credential_types
+#            tags: credential_types
+#          - role: controller_credentials
+#            var: controller_credentials
+#            tags: credentials
+          - role: controller_projects
+            var: controller_projects
+            tags: projects
+          - role: controller_inventories
+            var: controller_inventories
+            tags: inventories
+          - role: controller_inventory_sources
+            var: controller_inventory_sources
+            tags: inventory_sources
+          - role: controller_job_templates
+            var: controller_templates
+            tags: job_templates
+          - role: controller_workflow_job_templates
+            var: controller_workflows
+            tags: workflow_job_templates
