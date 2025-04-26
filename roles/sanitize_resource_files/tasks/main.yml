@@ -20,7 +20,7 @@
 - name: Replace the eod delimeter
   ansible.builtin.replace:
     path: "{{ this_resource_file.path }}"
-    regexp: '\\.\\.\\.'
+    regexp: '\.\.\.'
     replace: ""
   loop: "{{ casc_resources_output.files }}"
   loop_control:
