@@ -43,3 +43,46 @@
   loop: "{{ casc_resources_output.files }}"
   loop_control:
     loop_var: this_resource_file
+
+- name: Check if hosts.yaml exists
+  ansible.builtin.stat:
+    path: "{{ filetree_create_output_path }}/hosts.yaml"
+  register: hosts_file_output
+
+- name: Start block
+
+  block:
+
+    - name: Cleanup additional controller_hosts entries
+      ansible.builtin.replace:
+        path: "{{ filetree_create_output_path }}/hosts.yaml"
+        regexp: 'controller_hosts:'
+        replace: ''
+
+    - name: Cleanup sod markers
+      ansible.builtin.replace:
+        path: "{{ filetree_create_output_path }}/hosts.yaml"
+        regexp: '---'
+        replace: ''
+
+    - name: Remove blank lines
+      ansible.builtin.replace:
+        path: "{{ filetree_create_output_path }}/hosts.yaml"
+        regexp: '\n+$'
+        replace: ''
+
+    - name: Re-insert the first controller_hosts entry
+      ansible.builtin.lineinfile:
+        path: "{{ filetree_create_output_path }}/hosts.yaml"
+        insertbefore: BOF
+        line: 'controller_hosts:'
+
+    # Don't know where this extra blank line is coming from so remove it again
+    - name: Remove blank lines
+      ansible.builtin.replace:
+        path: "{{ filetree_create_output_path }}/hosts.yaml"
+        regexp: '\n+$'
+        replace: ''
+
+  when:
+    - hosts_file_output.stat.exists | bool == true
