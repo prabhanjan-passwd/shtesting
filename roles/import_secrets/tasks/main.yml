@@ -24,7 +24,7 @@
 
     - name: Set a fact for the target organization id
       ansible.builtin.set_fact:
-        target_organzation_id: "{{ target_organization_output.json.results.0.id }}"
+        target_organization_id: "{{ target_organization_output.json.results.0.id }}"
 
     - name: Substitute the new organization id for the old new organization name
       ansible.builtin.replace:
