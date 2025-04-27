@@ -1,0 +1,62 @@
+- name: Start block
+
+  block:
+
+    - name: Check whether the secrets export file for the old organization exists
+      ansible.builtin.stat:
+        path: "/tmp/{{ source_organization_name }}_{{ organization_id }}.json"
+      register: secrets_export_output
+
+    - name: Ensure that the secrets export file exists 
+      ansible.builtin.assert:
+        that:
+          - secrets_export_output.stat.exists | bool == true
+
+    - name: Retrieve the new organization id
+      ansible.builtin.uri:
+        url: "https://{{ aap_hostname }}/api/gateway/v1/organizations/?name={{ target_organization_name }}"
+        force_basic_auth: true
+        url_username: "{{ aap_username }}"
+        url_password: "{{ aap_password }}"
+        validate_certs: "{{ aap_validate_certs }]"
+      register: target_organization_output
+      no_log: "{{ secure_logging }}"
+
+    - name: Set a fact for the target organization id
+      ansible.builtin.set_fact:
+        target_organzation_id: "{{ target_organization_output.json.results.0.id }}"
+
+    - name: Substitute the new organization id for the old new organization name
+      ansible.builtin.replace:
+        path: "/tmp/{{ source_organization_name }}_{{ organization_id }}.json"
+        regexp: '"id": "{{ organization_id }}"'
+        regexp: '"id": "{{ target_organization_id }}"'
+
+    - name: Substitute the new organization name for the old new organization name
+      ansible.builtin.replace:
+        path: "/tmp/{{ source_organization_name }}_{{ organization_id }}.json"
+        regexp: '"id": "{{ organization_name }}"'
+        regexp: '"id": "{{ target_organization_name }}"'
+
+    - meta: end_play
+
+    # Stop here, new org needs to be created and old org names and ids need to be replaced in export file.
+    #
+#    - name: Copy the export file into the 2.5 container
+#      ansible.builtin.command: >
+#        podman cp /tmp/{{ source_organization_name }}_{{ organization_id }}.json {{ aap_25_controller_container_name }}:/tmp/{{ source_organization_name }}_{{ organization_id }}.json
+#
+#    - name: Import the credentials into the 2.5 container
+#      ansible.builtin.command: >
+#        podman exec {{ aap_25_controller_container_name }} awx-manage aapCreds --quiet --import --import-file=/tmp/{{ source_organization_name }}_{{ organization_id }}.json
+#
+#  always:
+#
+#    - name: Remove the export file from the 2.5 container
+#      ansible.builtin.command: >
+#        podman exec {{ aap_25_controller_container_name }} rm /tmp/{{ source_organization_name }}_{{ organization_id }}.json
+#
+#    - name: Remove the export file
+#      ansible.builtin.file:
+#        path: "/tmp/{{ source_organization_name }}_{{ organization_id }}.json"
+#        state: absent

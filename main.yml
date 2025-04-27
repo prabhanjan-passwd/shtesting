@@ -2,6 +2,20 @@
   connection: local
   gather_facts: false
 
+  tasks:
+
+    - name: Create in-memory inventory for 2.5 controllers
+      ansible.builtin.add_host:
+        name: "{{ this_25_controller }}"
+        groups: controllers_25
+      loop: "{{ controllers_25 }}"
+      loop_control:
+        loop_var: this_25_controller
+
+- hosts: localhost
+  connection: local
+  gather_facts: false
+
   pre_tasks:
 
     - name: Load vault vars
@@ -26,17 +40,37 @@
         extensions: ["yaml"]
         ignore_unknown_extensions: true
 
-#    - name: Import the organization's resources
-#      ansible.builtin.import_role:
-#        name: infra.aap_configuration.dispatch
-#      vars: 
-#        gateway_configuration_dispatcher_roles:
-#          - role: gateway_organizations
-#            var: aap_organizations
-#            tags: organizations
-#            assign_galaxy_credentials_to_org: true
-#            assign_default_ee_to_org: false
-#            assign_notification_templates_to_org: false
+    # Create the organization only first
+    - name: Import the organization's resources
+      ansible.builtin.import_role:
+        name: infra.aap_configuration.dispatch
+      vars: 
+        gateway_configuration_dispatcher_roles:
+          - role: gateway_organizations
+            var: aap_organizations
+            tags: organizations
+            assign_galaxy_credentials_to_org: true
+            assign_default_ee_to_org: false
+            assign_notification_templates_to_org: false
+
+- hosts: controllers_25
+  gather_facts: false
+
+  pre_tasks:
+
+    - name: Load vault vars
+      ansible.builtin.include_vars:
+        file: vault/vault.yml
+      no_log: "{{ secure_logging }}"
+
+  tasks:
+
+    # Change the organization name and organization id in the secrets export   
+    - name: Import secrets under the new organization's name and i 
+      ansible.builtin.include_role:
+        name: import_secrets
+
+#
 #
 #        controller_configuration_dispatcher_roles:
 #          # ORDER MATTERS!!!
