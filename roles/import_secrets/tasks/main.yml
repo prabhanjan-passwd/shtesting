@@ -37,7 +37,7 @@
       ansible.builtin.replace:
         path: "/tmp/{{ source_organization_name }}_{{ organization_id }}.json"
         regexp: '"id": "{{ source_organization_name }}"'
-        replace: '"id": "{{ target_organization_name }}"'
+        replace: '"name": "{{ target_organization_name }}"'
         backup: true
 
     - meta: end_play
