@@ -18,7 +18,7 @@
         force_basic_auth: true
         url_username: "{{ aap_username }}"
         url_password: "{{ aap_password }}"
-        validate_certs: "{{ aap_validate_certs }]"
+        validate_certs: "{{ aap_validate_certs }}"
       register: target_organization_output
       no_log: "{{ secure_logging }}"
 
