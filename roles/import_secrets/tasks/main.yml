@@ -26,17 +26,17 @@
       ansible.builtin.set_fact:
         target_organization_id: "{{ target_organization_output.json.results.0.id }}"
 
-    - name: Substitute the new organization id for the old new organization name
+    - name: Substitute the new organization id for the old new organization id
       ansible.builtin.replace:
         path: "/tmp/{{ source_organization_name }}_{{ organization_id }}.json"
         regexp: '"id": "{{ organization_id }}"'
-        regexp: '"id": "{{ target_organization_id }}"'
+        replace: '"id": "{{ target_organization_id }}"'
 
     - name: Substitute the new organization name for the old new organization name
       ansible.builtin.replace:
         path: "/tmp/{{ source_organization_name }}_{{ organization_id }}.json"
         regexp: '"id": "{{ organization_name }}"'
-        regexp: '"id": "{{ target_organization_name }}"'
+        replace: '"id": "{{ target_organization_name }}"'
 
     - meta: end_play
 
