@@ -52,6 +52,7 @@
             assign_galaxy_credentials_to_org: true
             assign_default_ee_to_org: false
             assign_notification_templates_to_org: false
+        controller_configuration_dispatcher_roles: []
 
 - hosts: controllers_25
   gather_facts: false
