@@ -43,9 +43,8 @@
     #- meta: end_play
 
     - name: Rename the export file
-      community.general.move:
-        src: "/tmp/{{ source_organization_name }}_{{ organization_id }}.json"
-        dest: "/tmp/{{ target_organization_name }}_{{ target_organization_id }}.json"
+      ansible.builtin.command: >
+        mv /tmp/{{ source_organization_name }}_{{ organization_id }}.json /tmp/{{ target_organization_name }}_{{ target_organization_id }}
 
     - name: Copy the export file into the 2.5 container
       ansible.builtin.command: >
