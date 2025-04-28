@@ -36,7 +36,7 @@
     - name: Substitute the new organization name for the old new organization name
       ansible.builtin.replace:
         path: "/tmp/{{ source_organization_name }}_{{ organization_id }}.json"
-        regexp: '"id": "{{ source_organization_name }}"'
+        regexp: '"name": "{{ source_organization_name }}"'
         replace: '"name": "{{ target_organization_name }}"'
         backup: true
 
