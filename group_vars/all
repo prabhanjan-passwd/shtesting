@@ -4,4 +4,6 @@ filetree_create_output_path: "/tmp/{{ organization_id }}"
 
 casc_org_resources_repo_url: "https://{{ github_secret }}@github.com/cigna-group-infrastructure-services/aap_casc_resource_exports.git"
 
+aap_25_controller_container_name: "automation-controller-web"
+
 secure_logging: true
