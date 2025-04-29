@@ -36,5 +36,4 @@ podman exec automation-controller-web /tmp/list_organizations.sh
 * Use this primary key value retrieved from the database instead of the organization ID you see displayed in the GUI.
 
 
-
-
+* The aapCreds.py will fail silently.  What do we do about this?
