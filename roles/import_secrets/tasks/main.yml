@@ -48,20 +48,6 @@
       ansible.builtin.replace:
         path: "/tmp/{{ source_organization_name }}_{{ organization_id }}.json"
         regexp: '"id": "{{ organization_id }}"'
-   - name: Retrieve the new organization's primary key
-      ansible.builtin.command: >
-        podman exec {{ aap_25_controller_container_name }} /tmp/{{ list_organizations_script_name }} | egrep {{ target_organization_name }} | awk {'print $1'}
-      register: list_organizations_output
-
-    - name: Ensure the primary key is obtained
-      ansible.builtin.assert:
-        that:
-          - list_organizations_output.stdout != ""
-
-    - name: Set a fact for the new organization's primary key
-      ansible.builtin.set_fact:
-        target_organization_primary_key: "{{ list_organizations_output.stdout }}"
-        replace: '"id": "{{ target_organization_primary_key }}"'
         #backup: true
 
     - name: Substitute the new organization name for the old new organization name
