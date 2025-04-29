@@ -6,4 +6,6 @@ casc_org_resources_repo_url: "https://{{ github_secret }}@github.com/cigna-group
 
 aap_25_controller_container_name: "automation-controller-web"
 
+list_organizations_script_name: "list_organizations.sh"
+
 secure_logging: true

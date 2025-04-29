@@ -12,6 +12,8 @@
         that:
           - secrets_export_output.stat.exists | bool == true
 
+    # We need the PK of the organizations from the database, not the org id displayed in the UI.
+    # Retrieve the new organizaiton id just for renaming purposes.
     - name: Retrieve the new organization id
       ansible.builtin.uri:
         url: "https://{{ aap_hostname }}/api/gateway/v1/organizations/?name={{ target_organization_name }}"
@@ -26,11 +28,25 @@
       ansible.builtin.set_fact:
         target_organization_id: "{{ target_organization_output.json.results.0.id }}"
 
+    - name: Retrieve the new organization's primary key
+      ansible.builtin.command: >
+        podman exec {{ aap_25_controller_container_name }} /tmp/{{ list_organizations_script_name }} | egrep {{ target_organization_name }} | awk {'print $1'}
+      register: list_organizations_output 
+
+    - name: Ensure the primary key is obtained
+      ansible.builtin.assert:
+        that:
+          - list_organizations_output.stdout != ""
+
+    - name: Set a fact for the new organization's primary key
+      ansible.builtin.set_fact:
+        target_organization_primary_key: "{{ list_organizations_output.stdout }}"
+
     - name: Substitute the new organization id for the old new organization id
       ansible.builtin.replace:
         path: "/tmp/{{ source_organization_name }}_{{ organization_id }}.json"
         regexp: '"id": "{{ organization_id }}"'
-        replace: '"id": "{{ target_organization_id }}"'
+        replace: '"id": "{{ target_organization_primary_key }}"'
         #backup: true
 
     - name: Substitute the new organization name for the old new organization name
