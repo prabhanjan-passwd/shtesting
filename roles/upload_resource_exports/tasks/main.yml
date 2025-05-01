@@ -1,0 +1,35 @@
+- name: Configure git email
+  ansible.builtin.command:
+    git config --global user.email "AnsibleAutomationPlatformEngineering@cigna.com"
+
+- name: Configure git username
+  ansible.builtin.command:
+    git config --global user.name "AAP Engineering"
+
+- name: Start block
+
+  block:
+
+    - name: Add all new files
+      ansible.builtin.command: >
+        git add . -A
+      args:
+        chdir: "{{ filetree_create_output_path }}"
+
+    - name: Add a commit message
+      ansible.builtin.command: >
+        git commit -m "AAP 2.4 CasC resource export for {{ organization_id }}"
+      args:
+        chdir: "{{ filetree_create_output_path }}"
+
+    - name: Commit the new files
+      ansible.builtin.command: >
+        git push origin {{ target_organization_name }}
+      args:
+        chdir: "{{ filetree_create_output_path }}"
+
+  rescue:
+
+    - name: Fail this play
+      ansible.builtin.fail:
+        msg: "Failed to commit resource exports for {{ target_organization_name }}."
