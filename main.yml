@@ -120,3 +120,7 @@
           - role: controller_workflow_job_templates
             var: controller_workflows
             tags: workflow_job_templates
+
+    - name: Upload the successfully imported resource files
+      ansible.builtin.include_role:
+        name: upload_resource_exports 

@@ -18,7 +18,7 @@
 
     - name: Add a commit message
       ansible.builtin.command: >
-        git commit -m "AAP 2.4 CasC resource export for {{ organization_id }}"
+        git commit -m "AAP 2.5 CasC resource export for {{ target_organization_name }}"
       args:
         chdir: "{{ filetree_create_output_path }}"
 
