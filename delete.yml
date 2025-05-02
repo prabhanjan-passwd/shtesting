@@ -1,0 +1,62 @@
+- hosts: localhost
+  connection: local
+  gather_facts: false
+
+  pre_tasks:
+
+    - name: Load vault vars
+      ansible.builtin.include_vars:
+        file: vault/vault.yml
+      no_log: "{{ secure_logging }}"
+
+  tasks:
+
+
+    - name: Include vars from {{ filetree_create_output_path }}
+      ansible.builtin.include_vars:
+        dir: "{{ filetree_create_output_path }}"
+        ignore_files: ["random.yaml"]
+        extensions: ["yaml"]
+        ignore_unknown_extensions: true
+
+    - name: Delete the resources in reverse order
+      ansible.builtin.import_role:
+        name: infra.aap_configuration.dispatch
+      vars:
+        platform_state: absent    
+        gateway_configuration_dispatcher_roles: []
+        controller_configuration_dispatcher_roles:
+          # ORDER MATTERS!!!
+          - role: controller_workflow_job_templates
+            var: controller_workflows
+            tags: workflow_job_templates
+          - role: controller_job_templates
+            var: controller_templates
+            tags: job_templates
+          - role: controller_inventory_sources
+            var: controller_inventory_sources
+            tags: inventory_sources
+          - role: controller_inventories
+            var: controller_inventories
+            tags: inventories
+          - role: controller_projects
+            var: controller_projects
+            tags: projects
+
+    - name: Delete the organization last
+      ansible.builtin.import_role:
+        name: infra.aap_configuration.dispatch
+      vars:
+        platform_state: absent    
+        controller_configuration_dispatcher_roles: []
+        gateway_configuration_dispatcher_roles:
+          - role: gateway_organizations
+            var: aap_organizations
+            tags: organizations
+            assign_galaxy_credentials_to_org: false
+            assign_default_ee_to_org: false
+            assign_notification_templates_to_org: false
+
+    - name: Fail this play
+      ansible.builtin.fail:
+        msg: "Failed to import resources from {{ filetree_create_output_path }}."
