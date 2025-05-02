@@ -86,7 +86,7 @@
 
     - name: Start block
 
-      block
+      block:
 
         - name: Include vars from {{ filetree_create_output_path }}
           ansible.builtin.include_vars:
