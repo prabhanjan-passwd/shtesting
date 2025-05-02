@@ -11,6 +11,13 @@
 
   tasks:
 
+    - name: Clone the resource repo for {{ organization_id }} 
+      ansible.builtin.include_role:
+        name: setup 
+
+    - name: Sanitize the source files
+      ansible.builtin.include_role:
+        name: sanitize_resource_files
 
     - name: Include vars from {{ filetree_create_output_path }}
       ansible.builtin.include_vars:
@@ -59,4 +66,4 @@
 
     - name: Fail this play
       ansible.builtin.fail:
-        msg: "Failed to import resources from {{ filetree_create_output_path }}."
+        msg: "Cleaned up all resources from {{ filetree_create_output_path }} because of import failure."
