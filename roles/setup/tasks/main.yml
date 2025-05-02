@@ -12,18 +12,32 @@
         that:
           - target_organization_name != ""
     
-    - name: Check if the remote branch exists
+    - name: Check if the remote branch exists for the 2.4 organization id
       ansible.builtin.command: >
         git ls-remote {{ casc_org_resources_repo_url }} refs/heads/{{ organization_id }}
-      register: git_branch_exists_output
+      register: git_24_branch_exists_output
       no_log: "{{ secure_logging }}"
-    
+
     - name: Clone the branch for source organization {{ organization_id }}
       ansible.builtin.command: >
         git clone -b {{ organization_id }} {{ casc_org_resources_repo_url }} {{ filetree_create_output_path }}
       when:
-        - git_branch_exists_output.stdout_lines | length | int != 0
+        - git_24_branch_exists_output.stdout_lines | length | int != 0
       no_log: "{{ secure_logging }}"
+
+    - name: Check if the remote branch exists for the 2.5 organization name
+      ansible.builtin.command: >
+        git ls-remote {{ casc_org_resources_repo_url }} refs/heads/{{ target_organization_name }}
+      register: git_25_branch_exists_output
+      no_log: "{{ secure_logging }}"
+
+    - name: Delete the existing 2.5 branch
+      ansible.builtin.command: >
+        git push origin :{{ target_organization_name }}
+      args:
+        chdir: "{{ filetree_create_output_path }}"
+      when:
+        - git_25_branch_exists_output.stdout_lines | length | int != 0
 
     - name: Create a new branch using the new organization name
       ansible.builtin.command: >
