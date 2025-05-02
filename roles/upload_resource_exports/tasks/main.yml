@@ -10,6 +10,21 @@
 
   block:
 
+    - name: Check if the remote branch exists for the 2.5 organization name
+      ansible.builtin.command: >
+        git ls-remote {{ casc_org_resources_repo_url }} refs/heads/{{ target_organization_name }}
+      register: git_25_branch_exists_output
+      no_log: "{{ secure_logging }}"
+
+    - name: Delete the existing 2.5 branch
+      ansible.builtin.command: >
+        git push origin :{{ target_organization_name }}
+      args:
+        chdir: "{{ filetree_create_output_path }}"
+      when:
+        - git_25_branch_exists_output.stdout_lines | length | int != 0
+
+    # The new branch for the target organization name was created in setup.
     - name: Add all new files
       ansible.builtin.command: >
         git add . -A
