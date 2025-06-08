@@ -1,0 +1,34 @@
+- name: Ensure source organization url is defined
+  ansible.builtin.assert:
+    that:
+      - source_organization_url != ""
+
+- name: Ensure the controller host is valid
+  ansible.builtin.assert:
+    that:
+      - _tmp_controller_host in valid_controller_hosts
+
+- name: Debug
+  ansible.builtin.debug:
+    msg:
+      - "{{ _tmp_controller_host }}"      
+      - "{{ organization_id }}"
+      - "{{ filetree_create_output_path }}"
+
+- name: Set fact for stage USM CasC resource repo
+  ansible.builtin.set_fact:
+    casc_org_resources_repo_url: "{{ casc_org_resources_repo_url_usm_stage }}"
+  when:
+    - _tmp_controller_host == "s-aap.sys.cigna.com"
+
+- name: Set fact for prod USM CasC resource repo
+  ansible.builtin.set_fact:
+    casc_org_resources_repo_url: "{{ casc_org_resources_repo_url_usm }}"
+  when:
+    - _tmp_controller_host == "ansibletower.sys.cigna.com"
+
+- name: Set fact for prod HS CasC resource repo
+  ansible.builtin.set_fact:
+    casc_org_resources_repo_url: "{{ casc_org_resources_repo_url_hs }}"
+  when:
+    - _tmp_controller_host == "ansibleautomation.sys.cigna.com"
