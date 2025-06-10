@@ -1,8 +1,16 @@
 organization_id: "{{ source_organization_url.split('/')[-2] }}"
 
+_tmp_controller_host: "{{ source_organization_url.split('/')[2] }}"
+
+valid_controller_hosts: ["s-aap.sys.cigna.com", "ansibletower.sys.cigna.com", "ansibleautomation.sys.cigna.com"]
+
 filetree_create_output_path: "/tmp/{{ organization_id }}" 
 
-casc_org_resources_repo_url: "https://{{ github_secret }}@github.com/cigna-group-infrastructure-services/aap_casc_resource_exports.git"
+casc_org_resources_repo_url_usm_stage: "https://{{ github_secret }}@github.com/cigna-group-infrastructure-services/aap_casc_resource_exports_usm_stage.git"
+
+casc_org_resources_repo_url_usm: "https://{{ github_secret }}@github.com/cigna-group-infrastructure-services/aap_casc_resource_exports_usm.git"
+
+casc_org_resources_repo_url_hs: "https://{{ github_secret }}@github.com/cigna-group-infrastructure-services/aap_casc_resource_exports_hs.git"
 
 aap_25_controller_container_name: "automation-controller-web"
 
