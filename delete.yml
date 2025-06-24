@@ -9,6 +9,11 @@
         file: vault/vault.yml
       no_log: "{{ secure_logging }}"
 
+    # The correct CasC export repo will be set here.
+    - name: Include pre tasks
+      ansible.builtin.include_tasks:
+        file: pre_tasks.yml
+
   tasks:
 
     - name: Clone the resource repo for {{ organization_id }} 
