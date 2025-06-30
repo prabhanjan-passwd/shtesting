@@ -101,9 +101,9 @@
         extensions: ["yaml"]
         ignore_unknown_extensions: true
 
-    - name: Test fail
-      ansible.builtin.fail:
-        msg: "Test fail to invoke cleanup process."
+#    - name: Test fail
+#      ansible.builtin.fail:
+#        msg: "Test fail to invoke cleanup process."
 
     # Import the rest of the resources.
     - name: Import the organization's resources
