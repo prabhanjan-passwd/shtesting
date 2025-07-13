@@ -1,12 +1,8 @@
 ---
 collections:
-  - name: ansible.posix
   - name: community.general
   - name: containers.podman
   - name: awx.awx
-  - name: ansible.hub
-  - name: ansible.eda
   - name: infra.aap_configuration
     version: "3.3.0"
-  - name: ansible.controller
-    version: "4.6.12"
+  
