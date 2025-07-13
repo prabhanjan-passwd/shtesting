@@ -4,8 +4,6 @@ collections:
   - name: community.general
   - name: containers.podman
   - name: awx.awx
-  - name: ansible.platform
-    version: "1.4.0"
   - name: ansible.hub
   - name: ansible.eda
   - name: infra.aap_configuration
