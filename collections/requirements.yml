@@ -7,7 +7,7 @@ collections:
   #- name: infra.controller_configuration
   - name: awx.awx
   - name: ansible.platform
-    version: 2.5
+    version: "1.4.0"
   - name: ansible.hub
   - name: ansible.eda
   - name: infra.aap_configuration
