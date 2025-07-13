@@ -5,7 +5,8 @@ collections:
   - name: containers.podman
   - name: awx.awx
   - name: ansible.platform
-    version: "1.4.0"
+    version: "2.5"
+    pre: true
   - name: ansible.hub
   - name: ansible.eda
   - name: infra.aap_configuration
